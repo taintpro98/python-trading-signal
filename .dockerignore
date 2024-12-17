@@ -10,3 +10,4 @@ env/
 # Ignore IDE/project files
 *.vscode/
 *.idea/
+test/

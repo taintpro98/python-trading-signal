@@ -5,3 +5,4 @@ pandas
 yfinance
 python-binance
 python-telegram-bot
+flask
