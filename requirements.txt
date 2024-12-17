@@ -1,0 +1,7 @@
+apscheduler
+requests
+python-dotenv
+pandas
+yfinance
+python-binance
+python-telegram-bot
