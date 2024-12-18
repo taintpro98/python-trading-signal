@@ -1,5 +1,5 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import asyncio
 import pandas as pd
@@ -14,7 +14,7 @@ async def notify_signal(df: pd.DataFrame):
         rate = last_row['Volume'] / last_row['Average_Volume_20']
         if rate > 1.5:
             # Convert the string to a datetime object
-            time_obj = datetime.strptime(last_row['Date'], '%Y-%m-%d %H:%M:%S')
+            time_obj = last_row['Date'].to_pydatetime()
             new_time = time_obj + timedelta(hours=7)
             message = "Huge trading volume occurred. Time: {}, Rate: {}, Volume: {}, Average_Volume_20: {}".format(new_time.strftime('%Y-%m-%d %H:%M:%S'), rate, last_row['Volume'], last_row['Average_Volume_20'])
             await bot.send_message(message)
