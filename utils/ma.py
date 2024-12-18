@@ -23,7 +23,7 @@ def calculate_moving_average(series: pd.Series, period: int=20) -> pd.Series:
         raise ValueError("Period must be greater than 0")
     return series.rolling(window=period).mean()
 
-def check_cross_ohlc(df, ma_column):
+def check_cross_ohlc(df: pd.DataFrame, ma_column: str):
     """
     Checks if the price crosses the moving average (MA) using OHLC data.
 
@@ -47,11 +47,10 @@ def check_cross_ohlc(df, ma_column):
     })
     return crosses
 
-def notify_cross(df, ma_column) -> str:
-    crosses = check_cross_ohlc(df, ma_column)
+def notify_cross(df: pd.Series, ma_column: str) -> str:
     message = ''
-    if not crosses[crosses['Cross Above']].empty:
+    if df['Low'] < df[ma_column] and df['High'] > df[ma_column] and df['Close'] > df[ma_column]:
         message = "\n- Price crossed above {}\n".format(ma_column)
-    elif not crosses[crosses['Cross Below']].empty:
+    elif df['Low'] < df[ma_column] and df['High'] > df[ma_column] and df['Close'] < df[ma_column]:
         message = "\n- Price crossed below {}\n".format(ma_column)
     return message
