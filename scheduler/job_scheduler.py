@@ -1,4 +1,5 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
+from datetime import datetime, timedelta
 
 import asyncio
 import pandas as pd
@@ -12,7 +13,10 @@ async def notify_signal(df: pd.DataFrame):
     if last_row['Volume'] > last_row['Average_Volume_20']:
         rate = last_row['Volume'] / last_row['Average_Volume_20']
         if rate > 1.5:
-            message = "An abnormal surge in trading volume occurred. Time: {}, Rate: {}, Volume: {}, Average_Volume_20: {}".format(last_row['Date'], rate, last_row['Volume'], last_row['Average_Volume_20'])
+            # Convert the string to a datetime object
+            time_obj = datetime.strptime(last_row['Date'], '%Y-%m-%d %H:%M:%S')
+            new_time = time_obj + timedelta(hours=7)
+            message = "Huge trading volume occurred. Time: {}, Rate: {}, Volume: {}, Average_Volume_20: {}".format(new_time.strftime('%Y-%m-%d %H:%M:%S'), rate, last_row['Volume'], last_row['Average_Volume_20'])
             await bot.send_message(message)
 
 async def scheduled_task():
@@ -23,6 +27,7 @@ async def scheduled_task():
     # price['MA200'] = calculate_moving_average(price['Close'], 200)
     # price['RSI'] = calculate_rsi(price['Close'])
     price['Average_Volume_20'] = calculate_moving_average(price['Volume'], 20)
+    print(price)
     await notify_signal(price)
     
 def run_scheduled_task():
@@ -30,7 +35,7 @@ def run_scheduled_task():
 
 def run_scheduler():
     scheduler = BlockingScheduler()
-    scheduler.add_job(run_scheduled_task, 'cron', minute='0,15,30,45')
+    scheduler.add_job(run_scheduled_task, 'cron', minute='1,16,31,46')
     print("Scheduler started...")
     try:
         scheduler.start()
