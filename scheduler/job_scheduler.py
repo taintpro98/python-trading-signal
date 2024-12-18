@@ -4,12 +4,13 @@ from datetime import timedelta
 import asyncio
 import pandas as pd
 from data.data_fetcher import PriceChecker
-from utils.ma import calculate_moving_average, calculate_rsi, notify_cross
+from utils.ma import calculate_moving_average, notify_cross
+from utils.rsi import calculate_rsi_wilders
 from bot.telegram_bot import TelegramBot
 
 async def notify_signal(df: pd.DataFrame):
     bot = TelegramBot()
-    last_row = df.iloc[-2]
+    last_row = df.iloc[-1]
     is_signal = False
     # Convert the string to a datetime object
     time_obj = last_row['Date'].to_pydatetime()
@@ -36,18 +37,17 @@ async def notify_signal(df: pd.DataFrame):
     if cross != "":
         is_signal = True
         message += cross
-            
     if is_signal:
         await bot.send_message(message)
-    
 
 async def scheduled_task():
     checker = PriceChecker()
-    price = checker.fetch_candles(300)
+    data = checker.fetch_candles(300)
+    price = data.iloc[:-1].copy()
     price['MA20'] = calculate_moving_average(price['Close'], 20)
     price['MA50'] = calculate_moving_average(price['Close'], 50)
     price['MA200'] = calculate_moving_average(price['Close'], 200)
-    price['RSI'] = calculate_rsi(price['Close'])
+    price['RSI'] = calculate_rsi_wilders(price['Close'])
     price['Average_Volume_20'] = calculate_moving_average(price['Volume'], 20)
     await notify_signal(price)
     

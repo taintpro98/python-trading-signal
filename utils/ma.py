@@ -1,13 +1,5 @@
 import pandas as pd 
 
-def calculate_rsi(series: pd.Series, period: int=14) -> pd.Series:
-    delta = series.diff(1)
-    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
-    rs = gain / loss
-    rsi = 100 - (100 / (1 + rs))
-    return rsi
-
 def calculate_moving_average(series: pd.Series, period: int=20) -> pd.Series:
     """
     Calculate the moving average for a given period.
@@ -55,7 +47,7 @@ def notify_cross(df: pd.Series, ma_column: str) -> str:
         message = "\n- Price crossed below {}\n".format(ma_column)
     elif df['Low'] < df[ma_column] and df['High'] > df[ma_column]:
         if df['Close'] > df[ma_column]:
-            message = "\n- Price touched {} from above".format(ma_column)
+            message = "\n- Price reached {} from above".format(ma_column)
         if df['Close'] < df[ma_column]:
-            message = "\n- Price touched {} from below".format(ma_column) 
+            message = "\n- Price reached {} from below".format(ma_column) 
     return message
