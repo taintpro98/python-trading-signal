@@ -27,7 +27,6 @@ async def scheduled_task():
     # price['MA200'] = calculate_moving_average(price['Close'], 200)
     # price['RSI'] = calculate_rsi(price['Close'])
     price['Average_Volume_20'] = calculate_moving_average(price['Volume'], 20)
-    print(price)
     await notify_signal(price)
     
 def run_scheduled_task():
