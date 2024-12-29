@@ -24,7 +24,7 @@ async def notify_signal(df: pd.DataFrame):
         rate = last_row['Volume'] / last_row['Average_Volume_20']
         if rate > 1.5:
             is_signal = True
-            message += "\n- Huge trading volume occurred. Rate: {}, Volume: {}, Average_Volume_20: {}".format(rate, last_row['Volume'], last_row['Average_Volume_20'])
+            message += "\n- Sudden trading volume occurred. Rate: {}, Volume: {}, Average_Volume_20: {}".format(rate, last_row['Volume'], last_row['Average_Volume_20'])
     cross = notify_cross(last_row, 'MA20')
     if cross != "":
         is_signal = True
@@ -38,6 +38,7 @@ async def notify_signal(df: pd.DataFrame):
         is_signal = True
         message += cross
     if is_signal:
+        message += "\n- Percentage change: {}".format(last_row['Percent_Change_Display'])
         await bot.send_message(message)
 
 async def scheduled_task():
@@ -49,6 +50,8 @@ async def scheduled_task():
     price['MA200'] = calculate_moving_average(price['Close'], 200)
     price['RSI'] = calculate_rsi_wilders(price['Close'])
     price['Average_Volume_20'] = calculate_moving_average(price['Volume'], 20)
+    price["Percent_Change"] = ((price["Close"] - price["Open"]) / price["Open"]) * 100
+    price["Percent_Change_Display"] = price["Percent_Change"].apply(lambda x: f"{x:+.2f}%")
     await notify_signal(price)
     
 def run_scheduled_task():
@@ -56,7 +59,7 @@ def run_scheduled_task():
 
 def run_scheduler():
     scheduler = BlockingScheduler()
-    scheduler.add_job(run_scheduled_task, 'cron', minute='1,16,31,46')
+    scheduler.add_job(run_scheduled_task, 'cron', second=20, minute='0,15,30,45')
     print("Scheduler started...")
     try:
         scheduler.start()
