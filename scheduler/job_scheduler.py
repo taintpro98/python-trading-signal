@@ -38,7 +38,7 @@ async def notify_signal(df: pd.DataFrame):
         is_signal = True
         message += cross
     if is_signal:
-        message += "\n- Percentage change: {}".format(last_row['Percent_Change_Display'])
+        message += "\n- Percentage change: {} to {}".format(last_row['Percent_Change_Display'], last_row['Close'])
         await bot.send_message(message)
 
 async def scheduled_task():

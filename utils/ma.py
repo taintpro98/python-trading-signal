@@ -42,9 +42,9 @@ def check_cross_ohlc(df: pd.DataFrame, ma_column: str):
 def notify_cross(df: pd.Series, ma_column: str) -> str:
     message = ''
     if df['Open'] < df[ma_column] and df['Close'] > df[ma_column]:
-        message = "\n- Price crossed above {}\n".format(ma_column)
+        message = "\n- Price crossed above {}".format(ma_column)
     elif df['Open'] > df[ma_column] and df['Close'] < df[ma_column]:
-        message = "\n- Price crossed below {}\n".format(ma_column)
+        message = "\n- Price crossed below {}".format(ma_column)
     elif df['Low'] < df[ma_column] and df['High'] > df[ma_column]:
         if df['Close'] > df[ma_column]:
             message = "\n- Price reached {} from above".format(ma_column)
