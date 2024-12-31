@@ -4,7 +4,7 @@ from datetime import timedelta
 import asyncio
 import pandas as pd
 from data.data_fetcher import PriceChecker
-from utils.ma import calculate_moving_average, notify_cross
+from utils.ma import calculate_moving_average, notify_cross, calculate_min_max_scalar
 from utils.rsi import calculate_rsi_wilders
 from bot.telegram_bot import TelegramBot
 
@@ -37,6 +37,15 @@ async def notify_signal(df: pd.DataFrame):
     if cross != "":
         is_signal = True
         message += cross
+    periods = [20, 50, 200]
+    min_max_scalar = calculate_min_max_scalar(df, periods)
+    for p in periods:
+        if last_row['Close'] < min_max_scalar[f'MinLow{p}']:
+            is_signal = True
+            message += "\n- The price breaks below the {}-candle low".format(p)
+        if last_row['Close'] > min_max_scalar[f'MaxHigh{p}']:
+            is_signal = True
+            message += "\n- The price breaks above the {}-candle high".format(p)
     if is_signal:
         message += "\n- Percentage change: {} to {}".format(last_row['Percent_Change_Display'], last_row['Close'])
         await bot.send_message(message)

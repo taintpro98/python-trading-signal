@@ -51,3 +51,25 @@ def notify_cross(df: pd.Series, ma_column: str) -> str:
         if df['Close'] < df[ma_column]:
             message = "\n- Price reached {} from below".format(ma_column) 
     return message
+
+def calculate_min_max_scalar(df: pd.Series, periods=(20, 50, 200)):
+    """
+    Calculate the minimum of low prices and maximum of high prices 
+    over specific periods as scalar values.
+    Args:
+        df (pd.DataFrame): DataFrame containing OHLC data.
+        periods (tuple): Periods to calculate min/max for.
+
+    Returns:
+        dict: A dictionary containing the min/max values for each period.
+    """
+    results = {}
+    for period in periods:
+        # Calculate the rolling minimum of low prices
+        min_low = df['Low'].rolling(window=period).min().iloc[-1]
+        # Calculate the rolling maximum of high prices
+        max_high = df['High'].rolling(window=period).max().iloc[-1]
+        # Store the results
+        results[f'MinLow{period}'] = min_low
+        results[f'MaxHigh{period}'] = max_high
+    return results

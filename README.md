@@ -18,3 +18,5 @@ docker run -d --env-file .env -p 8000:8000 python-trading-signal
 ## logs
 koyeb service logs respectable-flea/python-trading-signal
 ```
+
+## Test
