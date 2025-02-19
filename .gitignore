@@ -9,3 +9,5 @@ __pycache__/
 venv/
 *.png
 test/
+test.py
+.DS_Store

@@ -14,3 +14,4 @@ BINANCE_API_SECRET = os.getenv("BINANCE_API_SECRET")
 # Other settings
 SYMBOL = "BTCUSDT"
 INTERVAL = "15m"
+

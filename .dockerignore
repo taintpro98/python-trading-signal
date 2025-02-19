@@ -13,3 +13,4 @@ env/
 test/
 *.png
 *.md
+test.py

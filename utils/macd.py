@@ -92,13 +92,13 @@ def find_divergence_convergence(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 # Example usage
-data = {
-    'Date': pd.date_range(start='2024-01-01', periods=20, freq='D'),
-    'Close': [102, 105, 107, 106, 109, 110, 113, 114, 116, 119, 118, 115, 117, 120, 122, 124, 123, 125, 127, 130],
-    'MACD_Histogram': [0.1, 0.15, 0.12, 0.08, 0.10, 0.11, 0.13, 0.10, 0.08, 0.06, 0.07, 0.04, 0.05, 0.06, 0.09, 0.12, 0.10, 0.13, 0.15, 0.18],
-    'RSI': [45, 50, 55, 52, 58, 60, 62, 59, 57, 55, 53, 50, 52, 55, 58, 61, 60, 63, 65, 68],
-}
+# data = {
+#     'Date': pd.date_range(start='2024-01-01', periods=20, freq='D'),
+#     'Close': [102, 105, 107, 106, 109, 110, 113, 114, 116, 119, 118, 115, 117, 120, 122, 124, 123, 125, 127, 130],
+#     'MACD_Histogram': [0.1, 0.15, 0.12, 0.08, 0.10, 0.11, 0.13, 0.10, 0.08, 0.06, 0.07, 0.04, 0.05, 0.06, 0.09, 0.12, 0.10, 0.13, 0.15, 0.18],
+#     'RSI': [45, 50, 55, 52, 58, 60, 62, 59, 57, 55, 53, 50, 52, 55, 58, 61, 60, 63, 65, 68],
+# }
 
-df = pd.DataFrame(data)
-df_with_signals = find_divergence_convergence(df)
-print(df_with_signals[['Date', 'Close', 'Divergence', 'Convergence']])
+# df = pd.DataFrame(data)
+# df_with_signals = find_divergence_convergence(df)
+# print(df_with_signals[['Date', 'Close', 'Divergence', 'Convergence']])
