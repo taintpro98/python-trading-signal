@@ -13,12 +13,12 @@ from typing import List
 async def notify_signal(dfs: List[pd.DataFrame], symbols=List[str]):
     bot = TelegramBot()
     horizon = "\n---------------\n"
-    last_row = dfs[0].iloc[-1]
-    time_obj = last_row['Date'].to_pydatetime()
+    time_obj = dfs[0].iloc[-1]['Date'].to_pydatetime()
     new_time = time_obj + timedelta(hours=7)
     allMessages = "At {}: ".format(new_time.strftime('%Y-%m-%d %H:%M:%S'))
     isMessage = False
-    for df, symbol in zip(dfs, symbols):
+    for (df, symbol) in zip(dfs, symbols):
+        last_row = df.iloc[-1]
         # Convert the string to a datetime object
         is_signal = False
         message = horizon
@@ -59,21 +59,24 @@ async def notify_signal(dfs: List[pd.DataFrame], symbols=List[str]):
             isMessage = True
     if isMessage:
         await bot.send_message(allMessages)
+        
+def get_price(data: pd.DataFrame) -> pd.DataFrame:
+    price = data.iloc[:-1].copy()
+    price['MA20'] = calculate_moving_average(price['Close'], 20)
+    price['MA50'] = calculate_moving_average(price['Close'], 50)
+    price['MA200'] = calculate_moving_average(price['Close'], 200)
+    price['RSI'] = calculate_rsi_wilders(price['Close'])
+    price['Average_Volume_20'] = calculate_moving_average(price['Volume'], 20)
+    price["Percent_Change"] = ((price["Close"] - price["Open"]) / price["Open"]) * 100
+    price["Percent_Change_Display"] = price["Percent_Change"].apply(lambda x: f"{x:+.2f}%")
+    return price
 
 async def scheduled_task(tokens: List[str]):
     checker = PriceChecker()
     prices = []
     for token in tokens:
         data = checker.fetch_candles(300, token)
-        price = data.iloc[:-1].copy()
-        price['MA20'] = calculate_moving_average(price['Close'], 20)
-        price['MA50'] = calculate_moving_average(price['Close'], 50)
-        price['MA200'] = calculate_moving_average(price['Close'], 200)
-        price['RSI'] = calculate_rsi_wilders(price['Close'])
-        price['Average_Volume_20'] = calculate_moving_average(price['Volume'], 20)
-        price["Percent_Change"] = ((price["Close"] - price["Open"]) / price["Open"]) * 100
-        price["Percent_Change_Display"] = price["Percent_Change"].apply(lambda x: f"{x:+.2f}%")
-        prices.append(price)
+        prices.append(get_price(data))
     await notify_signal(prices, tokens)
     
 def run_scheduled_task(tokens: List[str]):
