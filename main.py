@@ -14,7 +14,7 @@ def start_scheduler(tokens: List[str]):
     run_scheduler(tokens)  # Or asyncio.run(run_scheduler()) if it's an async function
 
 if __name__ == "__main__":
-    tokens = ["BTCUSDT", "SOLUSDT"]
+    tokens = ["BTCUSDT", "SOLUSDT", "XRPUSDT"]
     # Run the scheduler in a separate thread
     threading.Thread(target=run_scheduler, args=(tokens, ), daemon=True).start()
 
